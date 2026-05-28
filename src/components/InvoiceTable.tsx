@@ -32,24 +32,6 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
           render: (text: string) => <span className="font-semibold">{text}</span>,
         },
         {
-          title: 'Vendor Name',
-          key: 'vendorName',
-          width: 220,
-          sorter: (a, b) =>
-            a.vendorData.vendorName.localeCompare(b.vendorData.vendorName),
-          render: (_, record) => record.vendorData.vendorName,
-        },
-        {
-          title: 'Document Date',
-          key: 'documentDate',
-          width: 120,
-          sorter: (a, b) =>
-            new Date(a.invoiceData.documentDate).getTime() -
-            new Date(b.invoiceData.documentDate).getTime(),
-          render: (_, record) =>
-            new Date(record.invoiceData.documentDate).toLocaleDateString(),
-        },
-        {
           title: 'Start Date',
           key: 'startDate',
           width: 120,
@@ -83,21 +65,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
             ),
           render: (_, record) => record.invoiceData.responsiblePerson || 'Unassigned',
         },
-        {
-          title: 'Gross Amount',
-          key: 'grossAmount',
-          width: 140,
-          align: 'right' as const,
-          sorter: (a, b) => a.invoiceData.grossAmount - b.invoiceData.grossAmount,
-          render: (_, record) => (
-            <span className="font-semibold text-gray-800">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'EUR',
-              }).format(record.invoiceData.grossAmount)}
-            </span>
-          ),
-        },
+        
         {
           title: 'Status',
           dataIndex: 'status',

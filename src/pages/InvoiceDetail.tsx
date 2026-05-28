@@ -307,21 +307,18 @@ const InvoiceDetail: React.FC = () => {
                 {invoice.invoiceNumber}
               </h1>
               <p className="text-sm text-slate-600">
-                {invoice.vendorData?.vendorName} ·{' '}
-                {invoice.invoiceData?.documentDate
-                  ? new Date(invoice.invoiceData.documentDate).toLocaleDateString('en-US', {
+                {invoice.invoiceData?.responsiblePerson || 'Unassigned'} ·{' '}
+                {invoice.invoiceData?.endDate ? (
+                  <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-800 ring-1 ring-red-200">
+                    Fill details by {new Date(invoice.invoiceData.endDate).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
-                    })
-                  : 'Date not available'}
-                {' · '}
-                {invoice.invoiceData?.grossAmount
-                  ? new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    }).format(invoice.invoiceData.grossAmount)
-                  : 'Amount not available'}
+                    })}
+                  </span>
+                ) : (
+                  <span className="text-slate-500">No deadline set</span>
+                )}
               </p>
             </div>
             <div className="flex flex-col items-start gap-3 sm:items-end text-sm text-slate-500">
