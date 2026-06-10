@@ -268,7 +268,10 @@ const InvoiceDetail: React.FC = () => {
   if (loading) {
     return (
       <Layout.Content className="p-6 bg-gray-50 flex items-center justify-center min-h-screen">
-        <Spin size="large" tip="Loading invoice details..." />
+        <div className="flex flex-col items-center gap-3">
+          <Spin size="large" />
+          <span className="text-sm text-slate-600">Loading invoice details...</span>
+        </div>
       </Layout.Content>
     );
   }

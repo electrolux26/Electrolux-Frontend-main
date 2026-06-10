@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Layout } from 'antd';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -16,32 +16,27 @@ import InvoiceDetail from './pages/InvoiceDetail';
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}
           <Route
-            path="/*"
             element={
               <ProtectedRoute>
-                <Layout
-                  style={{ minHeight: '100vh' }}
-                  className="bg-gray-50"
-                >
+                <Layout style={{ minHeight: '100vh' }} className="bg-gray-50">
                   <AppHeader />
-
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/invoices" element={<Home />} />
-                    <Route path="/invoice/:id" element={<InvoiceDetail />} />
-                    <Route path="*" element={<Navigate to="/invoices" replace />} />
-                  </Routes>
+                  <Outlet />
                 </Layout>
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/" element={<Home />} />
+            <Route path="invoices" element={<Home />} />
+            <Route path="invoice/:id" element={<InvoiceDetail />} />
+            <Route path="*" element={<Navigate to="/invoices" replace />} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>

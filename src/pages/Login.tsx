@@ -69,8 +69,9 @@ const Login: React.FC = () => {
 
         {/* Loading Indicator */}
         {isLoading && (
-          <div className="mb-6 flex justify-center">
-            <Spin tip="Authenticating..." />
+          <div className="mb-6 flex flex-col items-center gap-2">
+            <Spin />
+            <span className="text-sm text-slate-600">Authenticating...</span>
           </div>
         )}
 
