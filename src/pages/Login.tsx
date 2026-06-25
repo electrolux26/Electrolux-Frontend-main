@@ -1,7 +1,6 @@
 /**
  * Login Page Component
  * Initial page with Microsoft authentication
- * Simulates authentication flow for demo purposes
  */
 
 import React, { useState } from 'react';
@@ -98,14 +97,14 @@ const Login: React.FC = () => {
           )}
         </Button>
 
-        {/* Demo Info */}
+        {/* Azure AD Info */}
         <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-gray-700 mb-2">
-            <strong>Demo Mode:</strong>
+            <strong>Authentication:</strong>
           </p>
           <p className="text-xs text-gray-600">
-            This is a simulated authentication. Click the button above to proceed with a demo account.
-            In production, this will integrate with Azure AD for real Microsoft authentication.
+            Sign in using your Microsoft account via Azure AD. Configure `VITE_AZURE_CLIENT_ID`,
+            `VITE_AZURE_TENANT_ID` (or `VITE_AZURE_AUTHORITY`) and `VITE_AZURE_REDIRECT_URI` in your `.env` file.
           </p>
         </div>
 

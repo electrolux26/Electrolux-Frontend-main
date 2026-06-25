@@ -1,11 +1,11 @@
 /**
- * Authentication Context
- * Manages user authentication state across the application
- * Simulates Microsoft authentication for demo purposes
- * Later: Replace with real Azure AD integration via @azure/msal-browser
+ * Authentication Context backed by MSAL (@azure/msal-browser + @azure/msal-react)
  */
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useMsal, useIsAuthenticated } from '@azure/msal-react';
+import type { AccountInfo } from '@azure/msal-browser';
+import { loginRequest, logoutRequest } from '../authConfig';
 
 export interface AuthUser {
   id: string;
@@ -19,92 +19,72 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: () => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+const accountToUser = (account: AccountInfo | null): AuthUser | null => {
+  if (!account) return null;
+  return {
+    id: account.localAccountId || account.homeAccountId,
+    email: account.username,
+    name: account.name || account.username,
+    displayName: account.name || account.username,
+  };
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { instance } = useMsal();
+  const isAuthenticated = useIsAuthenticated();
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    const accounts = instance.getAllAccounts();
+    return accountToUser(accounts[0] || null);
+  });
   const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Simulates Microsoft authentication login
-   * In production, this would use @azure/msal-browser
-   * Later: Replace with real OAuth flow
-   */
+  useEffect(() => {
+    const accounts = instance.getAllAccounts();
+    setUser(accountToUser(accounts[0] || null));
+  }, [instance, isAuthenticated]);
+
   const login = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mock successful authentication
-      const mockUser: AuthUser = {
-        id: 'user-123',
-        email: 'user@electrolux.com',
-        name: 'John Doe',
-        displayName: 'John Doe',
-      };
-
-      // Store token in localStorage (mock)
-      localStorage.setItem('auth_token', 'mock-jwt-token-' + Date.now());
-      localStorage.setItem('user', JSON.stringify(mockUser));
-
-      setUser(mockUser);
+      const result = await instance.loginPopup({
+        ...loginRequest,
+        prompt: 'select_account',
+      });
+      setUser(accountToUser(result.account || instance.getAllAccounts()[0] || null));
     } catch (error) {
-      console.error('Authentication failed:', error);
+      console.error('MSAL login failed', error);
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [instance]);
 
-  /**
-   * Logout the user
-   */
-  const logout = useCallback(() => {
-    setUser(null);
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
-  }, []);
-
-  /**
-   * Check for existing session on mount
-   */
-  React.useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    const savedToken = localStorage.getItem('auth_token');
-
-    if (savedUser && savedToken) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error('Failed to restore session:', error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('auth_token');
-      }
+  const logout = useCallback(async () => {
+    try {
+      await instance.logoutPopup(logoutRequest);
+      setUser(null);
+    } catch (error) {
+      console.error('MSAL logout failed', error);
+      throw error;
     }
-  }, []);
+  }, [instance]);
 
   const value: AuthContextType = {
     user,
-    isAuthenticated: !!user,
+    isAuthenticated,
     isLoading,
     login,
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-/**
- * Hook to use authentication context
- */
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {

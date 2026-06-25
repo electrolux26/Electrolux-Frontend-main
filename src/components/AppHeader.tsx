@@ -6,20 +6,18 @@
 
 import React from 'react';
 import { Layout, Dropdown, Avatar } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AppHeader: React.FC = () => {
-  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   /**
    * Handle logout
    */
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    await logout();
   };
 
   /**

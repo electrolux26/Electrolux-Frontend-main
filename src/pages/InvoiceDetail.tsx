@@ -80,16 +80,16 @@ const InvoiceDetail: React.FC = () => {
             return last.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()).trim();
           };
 
-          Object.entries(mf).forEach(([k, v]) => {
-            const value = typeof v === 'string' ? v : v?.value ?? '';
-            const userStatus = value && String(value).trim() ? MissingFieldStatus.FILLED : MissingFieldStatus.PENDING;
+          (Object.entries(mf) as Array<[string, any]>).forEach(([k, v]) => {
+            const typedValue = typeof v === 'string' ? v : (v as { value?: string })?.value ?? '';
+            const userStatus = typedValue && String(typedValue).trim() ? MissingFieldStatus.FILLED : MissingFieldStatus.PENDING;
             // if already detailed object, keep its label/tab if present
-            if (v && typeof v === 'object' && v.label && v.tab) {
-              normalized[k] = { ...v, value, userStatus };
+            if (v && typeof v === 'object' && 'label' in v && 'tab' in v) {
+              normalized[k] = { ...v, value: typedValue, userStatus };
             } else {
               normalized[k] = {
                 label: labelFromKey(k),
-                value,
+                value: typedValue,
                 userStatus,
                 tab: mapTab(k),
               };
