@@ -46,8 +46,8 @@ const AppHeader: React.FC = () => {
             📋
           </div>
           <div className="hidden sm:flex flex-col leading-tight">
-            <span className="text-sm font-semibold text-slate-900">Invoice Processing</span>
-            <span className="text-xs text-slate-500">Work Queue</span>
+            <span className="text-sm font-semibold text-slate-900">VIM Coding Invoice Processing</span>
+            <span className="text-xs text-slate-500">Queue</span>
           </div>
         </Link>
 

@@ -17,6 +17,8 @@ interface StatusBadgeProps {
  */
 const getStatusColor = (status: InvoiceStatus): string => {
   switch (status) {
+    case InvoiceStatus.SUBMITTED:
+      return 'success';
     case InvoiceStatus.DONE:
       return 'success';
     case InvoiceStatus.NOT_SURE:
@@ -33,6 +35,8 @@ const getStatusColor = (status: InvoiceStatus): string => {
  */
 const getStatusLabel = (status: InvoiceStatus): string => {
   switch (status) {
+    case InvoiceStatus.SUBMITTED:
+      return 'Submitted';
     case InvoiceStatus.DONE:
       return 'Done';
     case InvoiceStatus.NOT_SURE:

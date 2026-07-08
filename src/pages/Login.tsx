@@ -42,7 +42,7 @@ const Login: React.FC = () => {
             📋
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Invoice Processing
+           VIM Coding Invoice Processing
           </h1>
           <p className="text-gray-600">
             Human-in-the-Loop HITL System
@@ -100,18 +100,18 @@ const Login: React.FC = () => {
         {/* Azure AD Info */}
         <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-gray-700 mb-2">
-            <strong>Authentication:</strong>
+            <strong>Secure access</strong>
           </p>
           <p className="text-xs text-gray-600">
-            Sign in using your Microsoft account via Azure AD. Configure `VITE_AZURE_CLIENT_ID`,
-            `VITE_AZURE_TENANT_ID` (or `VITE_AZURE_AUTHORITY`) and `VITE_AZURE_REDIRECT_URI` in your `.env` file.
+            Use your Microsoft work account to sign in and safely access your invoice dashboard.
+            If you need help signing in, contact your administrator for access.
           </p>
         </div>
 
         {/* Footer */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            © 2024 Electrolux. All rights reserved.
+            © 2026 Electrolux. All rights reserved.
           </p>
         </div>
       </Card>

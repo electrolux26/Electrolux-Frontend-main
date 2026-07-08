@@ -18,6 +18,7 @@ import {
 import { ArrowLeft } from 'lucide-react';
 import {
   Invoice,
+  InvoiceStatus,
   MissingFieldStatus,
   MissingFieldTab,
 } from '../models/invoice.model';
@@ -115,18 +116,22 @@ const InvoiceDetail: React.FC = () => {
   const missingEntries = Object.entries(missingFields);
 
   const pendingCount = useMemo(
-    () => missingEntries.filter(([, field]) => !field.value?.trim()).length,
+    () => missingEntries.filter(([, field]) => field.userStatus === MissingFieldStatus.PENDING).length,
     [missingEntries]
   );
 
   const filledCount = useMemo(
-    () => missingEntries.filter(([, field]) => !!field.value?.trim()).length,
+    () => missingEntries.filter(([, field]) => field.userStatus === MissingFieldStatus.FILLED).length,
     [missingEntries]
   );
 
+  const notSureCount = useMemo(
+    () => missingEntries.filter(([, field]) => field.userStatus === MissingFieldStatus.NOT_SURE).length,
+    [missingEntries]
+  );
 
   const tabPendingCount = (tab: MissingFieldTab) =>
-    missingEntries.filter(([, field]) => field.tab === tab && !field.value?.trim()).length;
+    missingEntries.filter(([, field]) => field.tab === tab && field.userStatus === MissingFieldStatus.PENDING).length;
 
   const basicMissingCount = tabPendingCount('Basic Info');
   const accountingMissingCount = tabPendingCount('Accounting');
@@ -150,11 +155,18 @@ const InvoiceDetail: React.FC = () => {
 
   const getMissingField = (fieldKey: string) => missingFields[fieldKey];
 
-  const updateMissingField = (fieldKey: string, value: string) => {
+  const updateMissingField = (
+    fieldKey: string,
+    value: string,
+    status?: MissingFieldStatus
+  ) => {
     setInvoice((prevInvoice) => {
       if (!prevInvoice) return prevInvoice;
       const field = prevInvoice.missingFields?.[fieldKey];
       if (!field) return prevInvoice;
+
+      const nextStatus =
+        status ?? (value.trim() ? MissingFieldStatus.FILLED : MissingFieldStatus.PENDING);
 
       return {
         ...prevInvoice,
@@ -163,7 +175,7 @@ const InvoiceDetail: React.FC = () => {
           [fieldKey]: {
             ...field,
             value,
-            userStatus: value.trim() ? MissingFieldStatus.FILLED : MissingFieldStatus.PENDING,
+            userStatus: nextStatus,
           },
         },
       };
@@ -234,25 +246,33 @@ const InvoiceDetail: React.FC = () => {
   const submitPayload = useMemo(
     () => ({
       invoiceId: invoice?.id,
+      status:
+        pendingCount > 0
+          ? invoice?.status
+          : InvoiceStatus.SUBMITTED,
       missingFields: missingEntries.map(([fieldKey, field]) => ({
         fieldKey,
         value: field.value ?? '',
         userStatus: field.userStatus,
       })),
     }),
-    [invoice, missingEntries]
+    [invoice, missingEntries, pendingCount]
   );
 
   const handleSubmitReview = async () => {
     if (!invoice) return;
     setActionLoading(true);
     try {
+      const nextStatus = pendingCount > 0 ? invoice.status : InvoiceStatus.SUBMITTED;
+
       await invoiceApi.updateInvoice(invoice.id, {
         missingFields: invoice.missingFields ?? {},
-        status: invoice.status,
+        status: nextStatus,
       });
+
       setInvoice({
         ...invoice,
+        status: nextStatus,
         updatedAt: new Date().toISOString(),
       });
       console.log('Review payload', submitPayload);
@@ -352,13 +372,15 @@ const InvoiceDetail: React.FC = () => {
                 <span className={`h-2.5 w-2.5 rounded-full ${pendingCount ? 'bg-red-500' : 'bg-emerald-500'}`} />
                 {pendingCount > 0
                   ? `${pendingCount} missing field${pendingCount !== 1 ? 's' : ''} remain`
+                  : notSureCount > 0
+                  ? `${notSureCount} field${notSureCount !== 1 ? 's' : ''} marked Not Sure`
                   : totalMissingFields > 0
                   ? 'All missing fields completed'
                   : 'No missing fields detected.'}
               </div>
               <div className="text-sm text-slate-600">
                 {totalMissingFields > 0
-                  ? `${filledCount} completed`
+                  ? `${filledCount} completed${notSureCount ? `, ${notSureCount} marked Not Sure` : ''}`
                   : 'No fields require manual review.'}
               </div>
             </div>
@@ -1099,7 +1121,7 @@ const InvoiceDetail: React.FC = () => {
           <div className="text-sm text-slate-600">
             {pendingCount > 0
               ? 'Resolve pending fields or mark them Not Sure to enable submission.'
-              : 'All fields are in review-ready state.'}
+              : `All fields are in review-ready state${notSureCount ? ' (some fields marked Not Sure).' : '.'}`}
           </div>
           <Button
             type="primary"

@@ -73,6 +73,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
           width: 130,
           filters: [
             { text: 'Pending', value: 'PENDING' },
+            { text: 'Submitted', value: 'SUBMITTED' },
             { text: 'Not Sure', value: 'NOT_SURE' },
             { text: 'Done', value: 'DONE' },
           ],

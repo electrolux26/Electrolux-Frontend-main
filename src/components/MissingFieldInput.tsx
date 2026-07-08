@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Input, Button } from 'antd';
 import { EditOutlined, CheckOutlined } from '@ant-design/icons';
-import { MissingField } from '../models/invoice.model';
+import { MissingField, MissingFieldStatus } from '../models/invoice.model';
 
 interface MissingFieldInputProps {
   fieldKey: string;
   field: MissingField;
-  onChange: (fieldKey: string, value: string) => void;
+  onChange: (fieldKey: string, value: string, status?: MissingFieldStatus) => void;
 }
 
 const MissingFieldInput: React.FC<MissingFieldInputProps> = ({
@@ -26,12 +26,25 @@ const MissingFieldInput: React.FC<MissingFieldInputProps> = ({
 
   const commitValue = () => {
     const trimmedValue = inputValue.trim();
-    onChange(fieldKey, trimmedValue);
+    const nextStatus = trimmedValue ? MissingFieldStatus.FILLED : MissingFieldStatus.PENDING;
+    onChange(fieldKey, trimmedValue, nextStatus);
     setEditing(!trimmedValue);
   };
 
+  const markNotSure = () => {
+    setInputValue('');
+    setEditing(false);
+    onChange(fieldKey, '', MissingFieldStatus.NOT_SURE);
+  };
+
+  const fieldStyle = field.userStatus === MissingFieldStatus.NOT_SURE
+    ? 'border-amber-200 bg-amber-50'
+    : isFilled
+    ? 'border-emerald-200 bg-emerald-50'
+    : 'border-red-200 bg-red-50';
+
   return (
-    <div className={`rounded-lg border px-3 py-2 ${isFilled ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'}`}>
+    <div className={`rounded-lg border px-3 py-2 ${fieldStyle}`}>
       {editing ? (
         <>
           <Input
@@ -45,7 +58,15 @@ const MissingFieldInput: React.FC<MissingFieldInputProps> = ({
             placeholder={field.label ? `Enter ${field.label}` : 'Enter value'}
             suffix={<EditOutlined className="text-slate-400" />}
           />
-          <div className="mt-2 flex justify-end">
+          <div className="mt-2 flex flex-wrap justify-between gap-2">
+            <Button
+              type="default"
+              size="small"
+              onClick={markNotSure}
+              className="min-w-[90px]"
+            >
+              Mark Not Sure
+            </Button>
             <Button
               type="primary"
               size="small"
@@ -59,7 +80,11 @@ const MissingFieldInput: React.FC<MissingFieldInputProps> = ({
         </>
       ) : (
         <div className="flex items-center justify-between gap-3">
-          <span className="text-sm text-slate-800">{field.value || 'No value entered'}</span>
+          <span className="text-sm text-slate-800">
+            {field.userStatus === MissingFieldStatus.NOT_SURE
+              ? 'Marked as Not Sure'
+              : field.value || 'No value entered'}
+          </span>
           <Button
             type="text"
             icon={<EditOutlined />}

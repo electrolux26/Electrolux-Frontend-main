@@ -1,12 +1,12 @@
 import React from 'react';
 import { Table, Empty } from 'antd';
-import { LineItem, MissingField } from '../models/invoice.model';
+import { LineItem, MissingField, MissingFieldStatus } from '../models/invoice.model';
 import MissingFieldInput, { renderVerifiedField } from './MissingFieldInput';
 
 interface LineItemsTableProps {
   lineItems: LineItem[];
   missingFields?: Record<string, MissingField>;
-  onFieldChange?: (fieldKey: string, value: string) => void;
+  onFieldChange?: (fieldKey: string, value: string, status?: MissingFieldStatus) => void;
   loading?: boolean;
 }
 
@@ -33,7 +33,9 @@ const LineItemsTable: React.FC<LineItemsTableProps> = ({
         <MissingFieldInput
           fieldKey={key}
           field={field}
-          onChange={(changedKey, changedValue) => onFieldChange?.(changedKey, changedValue)}
+          onChange={(changedKey, changedValue, status) =>
+            onFieldChange?.(changedKey, changedValue, status)
+          }
         />
       );
     }

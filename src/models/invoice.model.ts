@@ -10,6 +10,7 @@
  */
 export enum InvoiceStatus {
   PENDING = 'PENDING',
+  SUBMITTED = 'SUBMITTED',
   DONE = 'DONE',
   NOT_SURE = 'NOT_SURE',
 }
