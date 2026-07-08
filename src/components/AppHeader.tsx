@@ -6,11 +6,12 @@
 
 import React from 'react';
 import { Layout, Dropdown, Avatar } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AppHeader: React.FC = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   /**
@@ -18,6 +19,7 @@ const AppHeader: React.FC = () => {
    */
   const handleLogout = async () => {
     await logout();
+    navigate('/login');
   };
 
   /**
