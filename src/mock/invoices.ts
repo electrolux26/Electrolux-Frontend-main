@@ -56,6 +56,9 @@ export const mockInvoices: Invoice[] = [
       vatDate: '2024-01-15',
       expenseType: 'CAPEX',
       certifierEmail: 'certifier@electrolux.com',
+      responsiblePerson: 'John Williams',
+      startDate: '2024-01-10',
+      endDate: '2024-02-10',
     },
 
     // Accounting Section
@@ -250,6 +253,9 @@ export const mockInvoices: Invoice[] = [
       taxRate: 19.0,
       expenseType: 'OPEX',
       certifierEmail: '',
+      responsiblePerson: 'Sarah Mitchell',
+      startDate: '2024-01-15',
+      endDate: '2024-02-15',
     },
 
     // Accounting Section
@@ -439,6 +445,9 @@ export const mockInvoices: Invoice[] = [
       taxRate: 19.0,
       expenseType: 'CAPEX',
       certifierEmail: 'certifier@electrolux.com',
+      responsiblePerson: 'Robert Taylor',
+      startDate: '2024-01-15',
+      endDate: '2024-02-15',
     },
 
     // Accounting Section
@@ -620,6 +629,9 @@ export const mockInvoices: Invoice[] = [
       taxRate: 19.0,
       expenseType: 'OPEX',
       certifierEmail: 'certifier@electrolux.com',
+      responsiblePerson: 'Emma Wilson',
+      startDate: '2024-01-18',
+      endDate: '2024-02-18',
     },
 
     // Accounting Section
@@ -848,6 +860,9 @@ export const mockInvoices: Invoice[] = [
       taxRate: 19.0,
       expenseType: 'CAPEX',
       certifierEmail: 'certifier@electrolux.com',
+      responsiblePerson: 'Michael Anderson',
+      startDate: '2024-01-20',
+      endDate: '2024-02-20',
     },
 
     // Accounting Section
@@ -1031,6 +1046,9 @@ export const mockInvoices: Invoice[] = [
       taxRate: 0.0,
       expenseType: 'OPEX',
       certifierEmail: '',
+      responsiblePerson: 'Jennifer Davis',
+      startDate: '2024-01-20',
+      endDate: '2024-02-20',
     },
 
     // Accounting Section
@@ -1219,6 +1237,9 @@ export const mockInvoices: Invoice[] = [
       taxRate: 0.0,
       expenseType: '',
       certifierEmail: '',
+      responsiblePerson: 'Christopher Brown',
+      startDate: '2024-01-22',
+      endDate: '2024-02-22',
     },
 
     // Accounting Section - Several missing

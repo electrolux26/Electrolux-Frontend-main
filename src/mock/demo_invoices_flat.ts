@@ -56,7 +56,7 @@ export const demoInvoices: any[] = Array.from({ length: 45 }).map((_, idx) => {
       documentDate: '2024-01-21',
       startDate: `2024-01-${String((n % 22) + 1).padStart(2, '0')}`,
       endDate: `2024-01-${String(((n + 5) % 22) + 1).padStart(2, '0')}`,
-      responsiblePerson: ['Alice Johnson', 'Martin Schmidt', 'Li Wei', 'Sara Evans'][n % 4],
+      responsiblePerson: ['John Williams', 'Sarah Mitchell', 'Robert Taylor', 'Emma Wilson'][n % 4],
       balance: 1000 + n * 10,
       taxCode: 'V1',
       taxRate: 19,
