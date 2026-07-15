@@ -18,7 +18,7 @@ interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (demoUser?: AuthUser) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -36,9 +36,7 @@ const accountToUser = (account: AccountInfo | null): AuthUser | null => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { instance } = useMsal();
-  const msalAuthenticated = useIsAuthenticated();
-  const [demoAuthenticated, setDemoAuthenticated] = useState(false);
-  const isAuthenticated = msalAuthenticated || demoAuthenticated;
+  const isAuthenticated = useIsAuthenticated();
   const [user, setUser] = useState<AuthUser | null>(() => {
     const accounts = instance.getAllAccounts();
     return accountToUser(accounts[0] || null);
@@ -48,17 +46,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const accounts = instance.getAllAccounts();
     setUser(accountToUser(accounts[0] || null));
-  }, [instance, msalAuthenticated]);
+  }, [instance, isAuthenticated]);
 
-  const login = useCallback(async (demoUser?: AuthUser) => {
+  const login = useCallback(async () => {
     setIsLoading(true);
     try {
-      if (demoUser) {
-        setUser(demoUser);
-        setDemoAuthenticated(true);
-        return;
-      }
-
       const result = await instance.loginPopup({
         ...loginRequest,
         prompt: 'select_account',
@@ -74,19 +66,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = useCallback(async () => {
     try {
-      if (demoAuthenticated) {
-        setDemoAuthenticated(false);
-        setUser(null);
-        return;
-      }
-
       await instance.logoutPopup(logoutRequest);
       setUser(null);
     } catch (error) {
       console.error('MSAL logout failed', error);
       throw error;
     }
-  }, [instance, demoAuthenticated]);
+  }, [instance]);
 
   const value: AuthContextType = {
     user,

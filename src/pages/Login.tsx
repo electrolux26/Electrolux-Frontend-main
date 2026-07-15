@@ -19,15 +19,7 @@ const Login: React.FC = () => {
   const handleMicrosoftLogin = async () => {
     setError(null);
     try {
-      // Demo mode: skip Microsoft auth and sign in directly for the presentation.
-      await login({
-        id: 'demo-user',
-        email: 'demo@electrolux.com',
-        name: 'Demo User',
-        displayName: 'Demo User',
-      });
-      // await login(); // Uncomment to restore real Microsoft authentication
-
+      await login();
       // Redirect to home/invoice listing on success
       navigate('/invoices');
     } catch (err) {
